@@ -28,6 +28,9 @@ void sortowanie(string& path){
         //Foreach file in path
         for (const auto& dirEntry : recursive_directory_iterator(path)) {
             cout << dirEntry << endl << "Last write time :";
+            //todo:
+            //Sorting:
+            //  Dates and directories
         }
     }
     catch (const exception& e) {
