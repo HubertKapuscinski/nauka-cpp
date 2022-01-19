@@ -24,5 +24,6 @@ int main() {
 		if (file.eof()) break;
 		cout << ch;
 	}
-    
+
+    //File manipulation
 }
