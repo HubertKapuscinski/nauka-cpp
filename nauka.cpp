@@ -23,6 +23,10 @@ bool PathExist(const string& s) {
     return (stat (s.c_str(), &buffer) == 0);
 }
 
+void CreationDate(string& FilePath) {
+    
+}
+
 void sortowanie(string& path){
     try {
         //Foreach file in path
