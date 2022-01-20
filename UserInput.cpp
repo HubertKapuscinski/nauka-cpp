@@ -7,4 +7,5 @@ int main() {
     cin >> rok;
     if (rok <= 1987) cout << "możesz kandydować na prezydenta." << endl;
     else cout << "Nie możesz jeszcze kandydować na prezydenta." << endl;
+    return 0;
 }
