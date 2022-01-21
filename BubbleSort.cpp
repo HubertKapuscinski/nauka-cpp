@@ -2,13 +2,13 @@
 using namespace std;
 
 int main() {
-    //Variables
     int i, j,temp,pass=0;
+    //tablica zmiennych do sortowania
     int a[10] = {10,2,0,14,43,25,18,1,5,45};
 
-    cout <<"Input list ...\n";
-    for(i = 0; i<10; i++) cout <<a[i]<<"\t";
-    cout<<endl;
+    cout << "Input list ...\n";
+    for(i = 0; i<10; i++) cout << a[i] << "\t";
+    cout << endl;
 
     for(i = 0; i<10; i++) {
         for(j = i+1; j<10; j++) {
@@ -21,10 +21,10 @@ int main() {
     pass++;
     }
 
-    cout <<"Sorted Element List ...\n";
-    for(i = 0; i<10; i++) cout <<a[i]<<"\t";
+    cout << "Sorted Element List ...\n";
+    for(i = 0; i<10; i++) cout << a[i] << "\t";
 
-    cout<<"\nNumber of passes taken to sort the list:"<<pass<<endl;
+    cout<<"\nNumber of passes taken to sort the list:"<< pass <<endl;
 
     return 0;
 }
