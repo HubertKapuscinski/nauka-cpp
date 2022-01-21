@@ -26,4 +26,6 @@ int main() {
 	}
 
     //File manipulation
+
+    return 0;
 }
