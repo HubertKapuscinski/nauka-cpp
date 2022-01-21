@@ -18,7 +18,7 @@ int main() {
     file.close();
 
     //Read a file
-    char ch;
+    string ch;
 	while (1) {
 		file >> ch;
 		if (file.eof()) break;
@@ -26,6 +26,17 @@ int main() {
 	}
 
     //File manipulation
+    string s = ch;
+    string delimiter = " ";
+
+    size_t pos = 0;
+    string token;
+    while ((pos = s.find(delimiter)) != string::npos) {
+        token = s.substr(0, pos);
+        cout << token << endl;
+        s.erase(0, pos + delimiter.length());
+    }
+    cout << s << endl;
 
     return 0;
 }
