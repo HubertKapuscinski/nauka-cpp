@@ -4,37 +4,46 @@
 #include <filesystem>
 #include <string>
 #include <sys/types.h>
+#include <sstream>
+
+#ifndef WIN32
+#include <unistd.h>
+#endif
+
+#ifdef WIN32
+#define stat _stat
+#endif
 
 using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
 using namespace std;
 
 //Variables
-string decision,
-    changedPath,
-    srcPath,
-    cfgPath,
-    Path,
-    tp;
+string decision, changedPath, srcPath, cfgPath, Path, tp;
 fstream file;
 struct stat info;
+struct stat result;
+stringstream date;
 
 bool PathExist(const string& s) {
     struct stat buffer;
     return (stat (s.c_str(), &buffer) == 0);
 }
 
-void CreationDate(string& FilePath) {
-    
-}
-
 void sortowanie(string& path){
     try {
         //Foreach file in path
-        for (const auto& dirEntry : recursive_directory_iterator(path)) {
+        for (auto& dirEntry : recursive_directory_iterator(path)) {
             cout << dirEntry << endl << "Last write time :";
-            //todo:
-            //Sorting:
-            //  Dates and directories
+
+            string filename = dirEntry.path();
+
+            if(stat(filename.c_str(), &result)==0) {
+                auto mod_time = result.st_mtime;
+                cout << " " << mod_time << endl;
+                date << mod_time;
+                string dt = date.str();
+                cout << dt << endl;
+            }
         }
     }
     catch (const exception& e) {
