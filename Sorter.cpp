@@ -1,10 +1,10 @@
 #include <iostream>
 #include <fstream>
-#include <sys/stat.h>
-#include <filesystem>
-#include <string>
-#include <sys/types.h>
 #include <sstream>
+#include <string>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <filesystem>
 
 #ifndef WIN32
 #include <unistd.h>
@@ -14,36 +14,33 @@
 #define stat _stat
 #endif
 
-using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
 using namespace std;
 
 //Variables
 string decision, changedPath, srcPath, cfgPath, Path, tp;
+struct stat t_stat;
 fstream file;
-struct stat info;
-struct stat result;
-stringstream date;
+const char* cPath;
 
 bool PathExist(const string& s) {
     struct stat buffer;
     return (stat (s.c_str(), &buffer) == 0);
 }
 
-void sortowanie(string& path){
+void sorting(string& path){
     try {
         //Foreach file in path
-        for (auto& dirEntry : recursive_directory_iterator(path)) {
-            cout << dirEntry << endl << "Last write time :";
+        for (auto& dirEntry : filesystem::recursive_directory_iterator(path)) {
+            //Add data to variables
+            cPath = dirEntry.path().c_str();
+            stat(cPath, &t_stat);
+            struct tm * timeinfo = localtime(&t_stat.st_ctime);
 
-            string filename = dirEntry.path();
+            cout << dirEntry.path() << endl;
+            printf("File time and date: %s", asctime(timeinfo));
 
-            if(stat(filename.c_str(), &result)==0) {
-                auto mod_time = result.st_mtime;
-                cout << " " << mod_time << endl;
-                date << mod_time;
-                string dt = date.str();
-                cout << dt << endl;
-            }
+            //TODO:
+            //  rozdzoelić timeinfo na spacje do formatu plikó
         }
     }
     catch (const exception& e) {
@@ -51,8 +48,20 @@ void sortowanie(string& path){
     }
 }
 
-void start() {
+int main() {
     cfgPath = "ImagesSorter.cfg";
+
+    if (PathExist(cfgPath) != true) {
+        cout << "There was no config found. Creating...\n   Paste your path to files.\n";
+        cin >> srcPath;
+        //Create a file
+        ofstream cfg(cfgPath);
+        //Write to a file
+        cfg << srcPath;
+        //Close a file
+        cfg.close();
+    }
+
     cout << "Images Sorter\n This app overwrites directory selected before. If you want to change it press y, if no then n.\n";
     cin >> decision;
 
@@ -67,36 +76,17 @@ void start() {
         cfg << changedPath;
         //Close file
         cfg.close();
-        sortowanie(changedPath);
+        sorting(changedPath);
     }
     else if (decision == "n") {
-        file.open("ImagesSorter.cfg",ios::in);
+        file.open("ImagesSorter.cfg", ios::in);
         if (file.is_open()) {
-            while (getline(file, tp)) {
-                Path = tp;
-            }
+            while (getline(file, tp)) Path = tp;
             file.close();
         }
-        sortowanie(Path);
+        sorting(Path);
     }
-    else {
-        cout << "Please, try again.\n";
-    }
-}
-
-int main() {
-    cfgPath = "ImagesSorter.cfg";
-    if (PathExist(cfgPath) != true) {
-        cout << "There was no config found. Creating...\n   Paste your path to files.\n";
-        cin >> srcPath;
-        //Create a file
-        ofstream cfg(cfgPath);
-        //Write to a file
-        cfg << srcPath;
-        //Close a file
-        cfg.close();
-    }
-    start();
+    else cout << "Please, try again.\n";
 
     return 0;
 }
