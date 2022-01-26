@@ -3,22 +3,17 @@
 #include <string>
 #include <sys/stat.h>
 #include <filesystem>
-
-#ifndef WIN32
-#include <unistd.h>
-#endif
-
-#ifdef WIN32
-#define stat _stat
-#endif
+#include <cstring>
 
 using namespace std;
 
 //Variables
-string decision, changedPath, srcPath, cfgPath, Path, tp;
-struct stat t_stat;
-fstream file;
-const char* cPath;
+    string decision, changedPath, srcPath, cfgPath, Path, tp, pathToCD;
+    //Dates
+        string year, month, monthDay;
+    struct stat t_stat;
+    fstream file;
+    const char* cPath;
 
 bool PathExist(const string& s) {
     struct stat buffer;
@@ -37,8 +32,13 @@ void sorting(string& path){
             cout << dirEntry.path() << endl;
             printf("File time and date: %s", asctime(timeinfo));
 
-            //TODO:
-            //  rozdzoelić timeinfo na spacje do formatu plikó
+            //Dates
+            year = timeinfo->tm_year;
+            month = timeinfo->tm_mon;
+            monthDay = timeinfo->tm_mday;
+            pathToCD = path + "/" + year;
+
+            filesystem::create_directory(pathToCD);
         }
     }
     catch (const exception& e) {
@@ -50,7 +50,7 @@ int main() {
     cfgPath = "ImagesSorter.cfg";
 
     if (PathExist(cfgPath) != true) {
-        cout << "There was no config found. Creating...\n   Paste your path to files.\n";
+        cout << "There was no config found. Creating...\n Paste your path to files.\n";
         cin >> srcPath;
         //Create a file
         ofstream cfg(cfgPath);
