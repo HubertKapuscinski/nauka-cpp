@@ -4,16 +4,32 @@
 #include <sys/stat.h>
 #include <filesystem>
 #include <cstring>
+#include <time.h>
+#include <stdio.h>
+#include <sys/types.h>
+
+#ifndef WIN32
+#include <unistd.h>
+#endif
+
+#ifdef WIN32
+#define stat _stat
+#endif
 
 using namespace std;
 
 //Variables
-    string decision, changedPath, srcPath, cfgPath, Path, tp, pathToCD;
     //Dates
-        string year, month, monthDay;
-    struct stat t_stat;
-    fstream file;
-    const char* cPath;
+        string year, month, monthDay, day, dayNum, tm, asctimeinfo;
+    //String spliting
+        string delimeter;
+        size_t pos;
+        string token;
+    //Others
+        struct stat t_stat;
+        fstream file;
+        const char* cPath;
+        string decision, changedPath, srcPath, cfgPath, Path, tp, pathToCD;
 
 bool PathExist(const string& s) {
     struct stat buffer;
@@ -25,20 +41,21 @@ void sorting(string& path){
         //Foreach file in path
         for (auto& dirEntry : filesystem::recursive_directory_iterator(path)) {
             //Add data to variables
-            cPath = dirEntry.path().c_str();
-            stat(cPath, &t_stat);
-            struct tm * timeinfo = localtime(&t_stat.st_ctime);
+                cPath = dirEntry.path().c_str();
+                stat(cPath, &t_stat);
+                struct tm * timeinfo = localtime(&t_stat.st_ctime);
+                pos = 0;
+                delimeter = " ";
 
             cout << dirEntry.path() << endl;
             printf("File time and date: %s", asctime(timeinfo));
 
-            //Dates
-            year = timeinfo->tm_year;
-            month = timeinfo->tm_mon;
-            monthDay = timeinfo->tm_mday;
-            pathToCD = path + "/" + year;
-
-            filesystem::create_directory(pathToCD);
+            while (pos = asctimeinfo.find(delimeter) != string::npos) {
+                token = asctimeinfo.substr(0, pos);
+                cout << token << endl;
+                asctimeinfo.erase(0, pos + delimeter.length());
+            }
+            cout << asctimeinfo << endl;
         }
     }
     catch (const exception& e) {
