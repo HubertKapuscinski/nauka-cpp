@@ -44,7 +44,7 @@ void sorting(string& path){
                 cPath = dirEntry.path().c_str();
                 stat(cPath, &t_stat);
                 struct tm * timeinfo = localtime(&t_stat.st_ctime);
-                pos = 0;
+                pos = 1;
                 delimeter = " ";
 
             cout << dirEntry.path() << endl;
