@@ -1,21 +1,20 @@
 #include <iostream>
 #include <fstream>
-#include <string>
-#include <cstdio>
 
 using namespace std;
 
 //Variables
 string path = "/sys/class/backlight/amdgpu_bl0/brightness";
+string source;
 string brightness;
-int value;
 string decision;
+fstream brFile;
+int value;
 
 int main() {
     cout << "Current brightness value:";
-    fstream brFile;
-    brFile.open(path, ios::in | ios::out);
     
+    brFile.open(path, ios::in | ios::out);
     if (brFile.good() == true) {
         getline(brFile, brightness);
         cout << " " << brightness << endl
