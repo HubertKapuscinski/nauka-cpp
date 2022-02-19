@@ -2,21 +2,15 @@
 #include <fstream>
 #include <unistd.h>
 #include <string>
-
 using namespace std;
 
 //Variables
 string path = "/sys/class/backlight/amdgpu_bl0/brightness";
 string cfgPath = "/home/";
 string username = getlogin();
-string userPath;
-string source;
-string brightness;
-string decision;
-fstream brFile;
-fstream cfgFile;
-int value;
-int argVal;
+string userPath, brightness, decision;
+fstream brFile, cfgFile;
+int value, argVal;
 
 void error(int errVal) {
     switch (errVal) {
@@ -60,6 +54,7 @@ int main(int argc, char **argValue) {
         if (argVal > 255 || argVal < 0) error(4);
 
         openCfgFile();
+        //Remove old brightness file and create new with new value
         remove("/sys/class/backlight/amdgpu_bl0/brightness");
         brFile.open(path, ios::in | ios::out);
         if (brFile.is_open()) {
@@ -67,7 +62,6 @@ int main(int argc, char **argValue) {
             brFile.close();
         }
         else error(3);
-
         exit(0);
     }
     else if (argc > 2) error(2);
@@ -80,22 +74,20 @@ int main(int argc, char **argValue) {
              << "(Default = " << path << ")" << endl;
         cin >> userPath;
         
+        //Create directory and config file
         system("mkdir ~/.config/brightness/");
         system("touch ~/.config/brightness/brightness.cfg");
 
-        cout << cfgPath << endl;
-
         cfgFile.open(cfgPath);
-        if (cfgFile.is_open() == false) error(1);
-        else {
+        if (cfgFile.is_open()) {
             cfgFile << userPath;
             cfgFile.close();
             cout << "Config file created succesfuly." << endl;
         }
+        else error(1);
     }
-
     cout << "Current brightness value:";
-    
+
     openCfgFile();
 
     brFile.open(path, ios::in | ios::out);
@@ -105,29 +97,35 @@ int main(int argc, char **argValue) {
              << "Min = 0, Max = 255" << endl;
         brFile.close();
 
+        //Repeat every time loop ends
         while (true) {
             cout << "Enter brightness value to change or q to quit." << endl;
             cin >> decision;
-
             if (decision == "q" || decision == "Q") exit(0);
             else {
                 value = stoi(decision);
-            
                 if (value > 255 || value < 0) cout << "Error, wrong value." << endl;
                 else {
+                    //Remove old file
                     remove("/sys/class/backlight/amdgpu_bl0/brightness");
+                    //Open new file
                     brFile.open(path);
-                    brFile << value;
-                    brFile.close();
-                    brFile.open(path);
-                    getline(brFile, brightness);
-                    brFile.close();
-                    
-                    cout << endl << "Current brightness value: " << brightness << endl;
+                    if (brFile.is_open()) {
+                        //Write to file
+                        brFile << value;
+                        brFile.close();
+
+                        //Read the file
+                        brFile.open(path);
+                        getline(brFile, brightness);
+                        brFile.close();
+                        cout << endl << "Current brightness value: " << brightness << endl;
+                    }
+                    else error(3);
                 }
             }
         }
     } 
-    else cout << endl << "Error opening file." << endl;
+    else error(3);
     return 0;
 }
